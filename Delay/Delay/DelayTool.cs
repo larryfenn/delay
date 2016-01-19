@@ -71,6 +71,15 @@ namespace Delay
 
         public void stop()
         {
+            BassWasapi.BASS_WASAPI_SetDevice(outIndex);
+            BassWasapi.BASS_WASAPI_Stop(true);
+            BassWasapi.BASS_WASAPI_Free();
+            Bass.BASS_Free();
+            BassWasapi.BASS_WASAPI_SetDevice(sourceIndex);
+            BassWasapi.BASS_WASAPI_Stop(true);
+            BassWasapi.BASS_WASAPI_Free();
+            Bass.BASS_Free();
+
         }
 
         private int sourceWasapiProc(IntPtr buffer, int length, IntPtr user)
