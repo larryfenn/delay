@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Delay"
         mc:Ignorable="d"
-        Title="WinDelay" Height="167" Width="220">
+        Title="WinDelay" Height="181.223" Width="208.989" ResizeMode="CanMinimize">
     <Grid>
         <Slider x:Name="slider" Width="150" HorizontalAlignment="Left" Margin="10,108,0,0" VerticalAlignment="Top" ValueChanged="Slider_ValueChanged" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted"/>
-        <Label x:Name="label" Content="0 ms" HorizontalAlignment="Left" Margin="160,100,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label" Content="0 ms" HorizontalAlignment="Left" Margin="135,82,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="sourceList" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120"/>
         <ComboBox x:Name="outList" HorizontalAlignment="Left" Margin="10,63,0,0" VerticalAlignment="Top" Width="120"/>
         <Label x:Name="label1" Content="->" HorizontalAlignment="Left" Margin="57,37,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
@@ -21,6 +21,7 @@
                 </TransformGroup>
             </Label.RenderTransform>
         </Label>
-        <Button x:Name="button" Content="Go" HorizontalAlignment="Left" Margin="160,40,0,0" VerticalAlignment="Top" Width="42" Height="35"/>
+        <Button x:Name="button" Content="Go" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" Width="42" Height="22" Click="go_Click"/>
+        <Button x:Name="button1" Content="Stop" HorizontalAlignment="Left" Margin="135,63,0,0" VerticalAlignment="Top" Width="42" Height="22" Click="stop_Click"/>
     </Grid>
 </Window>

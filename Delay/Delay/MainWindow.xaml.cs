@@ -53,7 +53,17 @@ namespace Delay
         private void set(double val)
         {
             delay = val;
-            label.Content = Math.Round(10*delay) + "ms";
+            label.Content = Math.Round(100*delay) + "ms";
+        }
+
+        private void go_Click(object sender, RoutedEventArgs e)
+        {
+            dt.start(delay);
+        }
+
+        private void stop_Click(object sender, RoutedEventArgs e)
+        {
+            dt.stop();
         }
     }
 }
