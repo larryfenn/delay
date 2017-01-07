@@ -64,18 +64,18 @@ namespace Delay
             Console.WriteLine(delay);
 
             stop();
-            Bass.BASS_Init(0, 96000, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero); // "No Sound" device init
+            Bass.BASS_Init(0, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero); // "No Sound" device init
 
             // Garbage collector can't track the reference BassWasapi holds,
             // so we're adding a reference here to prevent garbage collection
             inProc = sourceWasapiProc;
             outProc = outWasapiProc;
-            BassWasapi.BASS_WASAPI_Init(sourceIndex, 96000, 0, 0, 1, 0, inProc, IntPtr.Zero);
-            BassWasapi.BASS_WASAPI_Init(outIndex, 96000, 0, 0, 4 * latency, 1 * latency, outProc, IntPtr.Zero);
+            BassWasapi.BASS_WASAPI_Init(sourceIndex, 44100, 0, 0, 1, 0, inProc, IntPtr.Zero);
+            BassWasapi.BASS_WASAPI_Init(outIndex, 44100, 0, 0, 4 * latency, 1 * latency, outProc, IntPtr.Zero);
 
             BassWasapi.BASS_WASAPI_SetDevice(outIndex);
-            pushstr = Bass.BASS_StreamCreatePush(96000, 2, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT, IntPtr.Zero);
-            outstr = BassMix.BASS_Mixer_StreamCreate(96000, 2, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT);
+            pushstr = Bass.BASS_StreamCreatePush(44100, 2, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT, IntPtr.Zero);
+            outstr = BassMix.BASS_Mixer_StreamCreate(44100, 2, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT);
             BassMix.BASS_Mixer_StreamAddChannel(outstr, pushstr, 0);
 
             BassWasapi.BASS_WASAPI_SetDevice(sourceIndex);
