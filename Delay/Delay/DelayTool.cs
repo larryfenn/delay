@@ -16,26 +16,36 @@ namespace Delay
         private int pushstr;
         private int outstr;
         private float latency;
-        private WASAPIPROC sourceProcess;
-        private WASAPIPROC outProcess;
+        private WASAPIPROC inProc, outProc;
+
         public DelayTool(ComboBox inlist, ComboBox outlist)
         {
             BassNet.Registration("larry.fenn@gmail.com", "2X531420152222");
             this.inlist = inlist;
             this.outlist = outlist;
             init();
-            sourceProcess = new WASAPIPROC(sourceWasapiProc);
-            outProcess = new WASAPIPROC(outWasapiProc);
         }
         private void init()
         {
             for (int i = 0; i < BassWasapi.BASS_WASAPI_GetDeviceCount(); i++)
             {
                 var device = BassWasapi.BASS_WASAPI_GetDeviceInfo(i);
-                if (device.IsEnabled)
-                {
-                    inlist.Items.Add(string.Format("{0} - {1}", i, device.name));
-                    outlist.Items.Add(string.Format("{0} - {1}", i, device.name));
+                if (!device.IsEnabled) {
+                    continue;
+                }
+                var descriptor = string.Format("{0} - {1}", i, device.name);
+                Console.WriteLine(descriptor);
+                Console.WriteLine("  device.IsInput: " + (device.IsInput ? "true" : "false"));
+                Console.WriteLine("  device.IsLoopback: " + (device.IsLoopback ? "true" : "false"));
+                Console.WriteLine("  device.IsDefault: " + (device.IsDefault ? "true" : "false"));
+                Console.WriteLine("  device.IsEnabled: " + (device.IsEnabled ? "true" : "false"));
+                Console.WriteLine("  device.IsDisabled: " + (device.IsDisabled ? "true" : "false"));
+                Console.WriteLine("  device.IsInitialized: " + (device.IsInitialized ? "true" : "false"));
+                Console.WriteLine("  device.IsUnplugged: " + (device.IsUnplugged ? "true" : "false"));
+                if (device.IsLoopback) {
+                    inlist.Items.Add(descriptor);
+                } else if (!device.IsInput) {
+                    outlist.Items.Add(descriptor);
                 }
             }
             inlist.SelectedIndex = 0;
@@ -53,14 +63,19 @@ namespace Delay
             Console.WriteLine(sourceIndex + " " + outIndex);
             Console.WriteLine(delay);
 
-            Bass.BASS_Init(0, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero); // "No Sound" device init
-            
-            BassWasapi.BASS_WASAPI_Init(sourceIndex, 44100, 0, 0, 1, 0, sourceProcess, IntPtr.Zero);
-            BassWasapi.BASS_WASAPI_Init(outIndex, 44100, 0, 0, 4*latency, 1*latency, outProcess, IntPtr.Zero);
+            stop();
+            Bass.BASS_Init(0, 96000, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero); // "No Sound" device init
+
+            // Garbage collector can't track the reference BassWasapi holds,
+            // so we're adding a reference here to prevent garbage collection
+            inProc = sourceWasapiProc;
+            outProc = outWasapiProc;
+            BassWasapi.BASS_WASAPI_Init(sourceIndex, 96000, 0, 0, 1, 0, inProc, IntPtr.Zero);
+            BassWasapi.BASS_WASAPI_Init(outIndex, 96000, 0, 0, 4 * latency, 1 * latency, outProc, IntPtr.Zero);
 
             BassWasapi.BASS_WASAPI_SetDevice(outIndex);
-            pushstr = Bass.BASS_StreamCreatePush(44100, 2, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT, IntPtr.Zero);
-            outstr = BassMix.BASS_Mixer_StreamCreate(44100, 2, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT);
+            pushstr = Bass.BASS_StreamCreatePush(96000, 2, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT, IntPtr.Zero);
+            outstr = BassMix.BASS_Mixer_StreamCreate(96000, 2, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT);
             BassMix.BASS_Mixer_StreamAddChannel(outstr, pushstr, 0);
 
             BassWasapi.BASS_WASAPI_SetDevice(sourceIndex);

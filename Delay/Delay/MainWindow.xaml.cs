@@ -22,7 +22,7 @@ namespace Delay
     public partial class MainWindow : Window
     {
         private bool dragStarted = false;
-        private double delay = 0;
+        private double delay = 4.7;
         private DelayTool dt;
 
         public MainWindow()
@@ -53,7 +53,12 @@ namespace Delay
         private void set(double val)
         {
             delay = val;
-            label.Content = Math.Round(100*delay) + "ms";
+            try {
+                label.Content = Math.Round(100 * delay) + "ms";
+            } catch
+            {
+
+            }
         }
 
         private void go_Click(object sender, RoutedEventArgs e)
